@@ -2,77 +2,87 @@
 <html>
 <head>
     <link rel="stylesheet" href="style.css">
-    <!--<script src="jquery-3.7.1.min.js"></script>-->
+   
 </head>
 <body>
     <?php 
-    $servername = "localhost";
-$username = "bcpi";
-$password = "temp";
-$dbname = "board";
+        $servername = "localhost";
+        $username = "bcpi";
+        $password = "temp";
+        $dbname = "board";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
-$board = array(
-    array("","","","","","","",""),
-    array("","","","","","","",""),
-    array("","","","","","","",""),
-    array("","","","","","","",""),
-    array("","","","","","","",""),
-    array("","","","","","","",""),
-    array("","","","","","","",""),
-    array("","","","","","","",""));
-for($n = 1;$n<9;$n++){
-for($i=1;$i<9;$i++){
-$sql = "SELECT column$i from board where id=$n";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-  
-  while($row = $result->fetch_assoc()) {
-    
-    $board[$n-1][$i-1] = $row["column$i"];
-  }
-  
-}
-}
-    
-}
-$conn->close();
-$pawnW = "<img src='https://upload.wikimedia.org/wikipedia/commons/0/04/Chess_plt60.png'>";
-$rookW = "<img src='https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png'>";
-$knightW = "<img src='https://upload.wikimedia.org/wikipedia/commons/2/28/Chess_nlt60.png'>";
-$bishopW = "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9b/Chess_blt60.png'>";
-$queenW = "<img src='https://upload.wikimedia.org/wikipedia/commons/4/49/Chess_qlt60.png'>";
-$kingW = "<img src='https://upload.wikimedia.org/wikipedia/commons/3/3b/Chess_klt60.png'>";
-$blank = "";
-$pawnB = "<img src='https://upload.wikimedia.org/wikipedia/commons/c/cd/Chess_pdt60.png'>";
-$rookB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png'>";
-$knightB = "<img src='https://upload.wikimedia.org/wikipedia/commons/f/f1/Chess_ndt60.png'>";
-$bishopB = "<img src='https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png'>";
-$queenB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/af/Chess_qdt60.png'>";
-$kingB = "<img src='https://upload.wikimedia.org/wikipedia/commons/e/e3/Chess_kdt60.png'>";
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        // Check connection
+        if ($conn->connect_error) {
+          die("Connection failed: " . $conn->connect_error);
+        }
+        $board = array(
+            array("","","","","","","",""),
+            array("","","","","","","",""),
+            array("","","","","","","",""),
+            array("","","","","","","",""),
+            array("","","","","","","",""),
+            array("","","","","","","",""),
+            array("","","","","","","",""),
+            array("","","","","","","",""));
+        for($n = 1;$n<9;$n++){
+        for($i=1;$i<9;$i++){
+            $sql = "SELECT column$i from board where id=$n";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0) {
+              
+                while($row = $result->fetch_assoc()) {
+                    $board[$n-1][$i-1] = $row["column$i"];
+                }
+              
+            }
+        }
+            
+    }
+    $conn->close();
+    $pawnW = "<img src='https://upload.wikimedia.org/wikipedia/commons/0/04/Chess_plt60.png'>";
+    $rookW = "<img onlick=\"moves(this.id);\" src='https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png'>";
+    $knightW = "<img src='https://upload.wikimedia.org/wikipedia/commons/2/28/Chess_nlt60.png'>";
+    $bishopW = "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9b/Chess_blt60.png'>";
+    $queenW = "<img src='https://upload.wikimedia.org/wikipedia/commons/4/49/Chess_qlt60.png'>";
+    $kingW = "<img src='https://upload.wikimedia.org/wikipedia/commons/3/3b/Chess_klt60.png'>";
+    $blank = "";
+    $pawnB = "<img src='https://upload.wikimedia.org/wikipedia/commons/c/cd/Chess_pdt60.png'>";
+    $rookB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png'>";
+    $knightB = "<img src='https://upload.wikimedia.org/wikipedia/commons/f/f1/Chess_ndt60.png'>";
+    $bishopB = "<img src='https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png'>";
+    $queenB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/af/Chess_qdt60.png'>";
+    $kingB = "<img src='https://upload.wikimedia.org/wikipedia/commons/e/e3/Chess_kdt60.png'>";
 
 ?>
 <script>
-function move(x1,y1,x2,y2) {
-  
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("board").innerHTML = this.responseText;
-      }
-    };
-    xmlhttp.open("GET", "move.php?x1=" + x1+"&y1="+y1+"&x2="+x2+"&y2="+y2, true);
-    xmlhttp.send();
-  
-}
+    function move(x1,y1,x2,y2) {
+      
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("board").innerHTML = this.responseText;
+          }
+        };
+        xmlhttp.open("GET", "move.php?x1=" + x1+"&y1="+y1+"&x2="+x2+"&y2="+y2, true);
+        xmlhttp.send();
+      
+    }
+    function populate(id){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("board").innerHTML = this.responseText;
+          }
+        };
+        xmlhttp.open("GET", "populate.php", true);
+        xmlhttp.send();
+    }
 </script>
-<button onclick="move(1,1,4,4);">click</button>
+<button onclick="move(2,2,1,1);">click</button>
+<button onclick="populate();">Populate</button>
 <p id="txtHint"></p>
     <table id="board" class="chess-board">
             <tbody>
