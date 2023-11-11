@@ -1,0 +1,14 @@
+
+body{
+font-family: monospace;
+    
+}
+
+.chess-board { border-spacing: 0; border-collapse: collapse; }
+            .chess-board th { padding: .1em; }
+            .chess-board td { border: 1px solid; width: 2em; height: 2em; text-align: center;font-size:20px;}
+            .chess-board .light { background: #eee; }
+            .chess-board .dark { background: #555; }
+            .chess-board img{width:30px;}
+            
+            
