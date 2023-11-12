@@ -1,8 +1,11 @@
 <?php
+//mysql server login info
 $servername = "localhost";
 $username = "bcpi";
 $password = "temp";
 $dbname = "board";
+
+//images for the pieces to display
 $pawnW = "<img src='https://upload.wikimedia.org/wikipedia/commons/0/04/Chess_plt60.png'>";
 $rookW = "<img src='https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png'>";
 $knightW = "<img src='https://upload.wikimedia.org/wikipedia/commons/2/28/Chess_nlt60.png'>";
@@ -18,7 +21,7 @@ $queenB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/af/Chess_q
 $kingB = "<img src='https://upload.wikimedia.org/wikipedia/commons/e/e3/Chess_kdt60.png'>";
 
 
-
+//returns from the database the piece located at speicfied x,y on the board
 function pquery($x,$y){
     global $servername; global $username; global $password; global $dbname;
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -37,7 +40,7 @@ function pquery($x,$y){
     }
     $conn->close();
 }   
-
+//changes the piece at the speicified x & y to the given value
 function change($x, $y,$value){
     global $servername; global $username; global $password; global $dbname;
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -61,7 +64,7 @@ function change($x, $y,$value){
     
 }
 
-
+//resets the data base to the starting chess board setup
 function populate(){
     $board = array(
     array("rookB","knightB","bishopB","queenB","kingB","bishopB","knightB","rookB"),
@@ -82,7 +85,7 @@ function populate(){
     }
     }
 }
-
+//moves a piece from (x1, y1) to (x2, y2)
 function move($x1,$y1,$x2,$y2){
     $piece = pquery($x1,$y1);
     change($x2,$y2,$piece);
@@ -90,20 +93,20 @@ function move($x1,$y1,$x2,$y2){
     
 }
 
+//returns the html code for the board using information from the database
 function getBoard(){
-    $pawnW = "<img src='https://upload.wikimedia.org/wikipedia/commons/0/04/Chess_plt60.png'>";
-    $rookW = "<img src='https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png'>";
-    $knightW = "<img src='https://upload.wikimedia.org/wikipedia/commons/2/28/Chess_nlt60.png'>";
-    $bishopW = "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9b/Chess_blt60.png'>";
-    $queenW = "<img src='https://upload.wikimedia.org/wikipedia/commons/4/49/Chess_qlt60.png'>";
-    $kingW = "<img src='https://upload.wikimedia.org/wikipedia/commons/3/3b/Chess_klt60.png'>";
-    $blank = "";
-    $pawnB = "<img src='https://upload.wikimedia.org/wikipedia/commons/c/cd/Chess_pdt60.png'>";
-    $rookB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png'>";
-    $knightB = "<img src='https://upload.wikimedia.org/wikipedia/commons/f/f1/Chess_ndt60.png'>";
-    $bishopB = "<img src='https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png'>";
-    $queenB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/af/Chess_qdt60.png'>";
-    $kingB = "<img src='https://upload.wikimedia.org/wikipedia/commons/e/e3/Chess_kdt60.png'>";
+    global $pawnW; 
+    global $rookW;
+    global $knightW;
+    global $bishopW; 
+    global $queenW;
+    global $kingW;
+    global $pawnB; 
+    global $rookB;
+    global $knightB;
+    global $bishopB;
+    global $queenB;
+    global  $kingB;
 
     global $servername; global $username; global $password; global $dbname;
 
@@ -121,6 +124,7 @@ function getBoard(){
         array("","","","","","","",""),
         array("","","","","","","",""),
         array("","","","","","","",""));
+    //goes through each row and column in data base and put it into 2d array
     for($n = 1;$n<9;$n++){
         for($i=1;$i<9;$i++){
             $sql = "SELECT column$i from board where id=$n";
@@ -135,6 +139,7 @@ function getBoard(){
         
     }
     $conn->close();
+    //echos the html for the table with the pieces from the 2d array
     echo "<tbody>
                 <tr>
                     <th></th>

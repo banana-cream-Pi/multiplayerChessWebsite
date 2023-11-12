@@ -6,60 +6,50 @@
 </head>
 <body>
     <?php 
-        $servername = "localhost";
-        $username = "bcpi";
-        $password = "temp";
-        $dbname = "board";
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-          die("Connection failed: " . $conn->connect_error);
-        }
-        $board = array(
-            array("","","","","","","",""),
-            array("","","","","","","",""),
-            array("","","","","","","",""),
-            array("","","","","","","",""),
-            array("","","","","","","",""),
-            array("","","","","","","",""),
-            array("","","","","","","",""),
-            array("","","","","","","",""));
-        for($n = 1;$n<9;$n++){
-        for($i=1;$i<9;$i++){
-            $sql = "SELECT column$i from board where id=$n";
-            $result = $conn->query($sql);
-            
-            if ($result->num_rows > 0) {
-              
-                while($row = $result->fetch_assoc()) {
-                    $board[$n-1][$i-1] = $row["column$i"];
-                }
-              
-            }
-        }
-            
-    }
-    $conn->close();
-    $pawnW = "<img src='https://upload.wikimedia.org/wikipedia/commons/0/04/Chess_plt60.png'>";
-    $rookW = "<img onlick=\"moves(this.id);\" src='https://upload.wikimedia.org/wikipedia/commons/5/5c/Chess_rlt60.png'>";
-    $knightW = "<img src='https://upload.wikimedia.org/wikipedia/commons/2/28/Chess_nlt60.png'>";
-    $bishopW = "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9b/Chess_blt60.png'>";
-    $queenW = "<img src='https://upload.wikimedia.org/wikipedia/commons/4/49/Chess_qlt60.png'>";
-    $kingW = "<img src='https://upload.wikimedia.org/wikipedia/commons/3/3b/Chess_klt60.png'>";
-    $blank = "";
-    $pawnB = "<img src='https://upload.wikimedia.org/wikipedia/commons/c/cd/Chess_pdt60.png'>";
-    $rookB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/a0/Chess_rdt60.png'>";
-    $knightB = "<img src='https://upload.wikimedia.org/wikipedia/commons/f/f1/Chess_ndt60.png'>";
-    $bishopB = "<img src='https://upload.wikimedia.org/wikipedia/commons/8/81/Chess_bdt60.png'>";
-    $queenB = "<img src='https://upload.wikimedia.org/wikipedia/commons/a/af/Chess_qdt60.png'>";
-    $kingB = "<img src='https://upload.wikimedia.org/wikipedia/commons/e/e3/Chess_kdt60.png'>";
-
+        require __DIR__ . '/functions.php';
+        
 ?>
 <script>
-    function move(x1,y1,x2,y2) {
-      
+    //function uses ajax magic to call the move function from functions.php which returns the board
+    function ntoc(note,a){
+        var columns = ['a','b','c','d','e','f','g','h'];
+        var rows = [8,7,6,5,4,3,2,1];
+        var x1=note[0];
+        var x2=note[1];
+        for(var i in columns){
+            if(x1==columns[i]){
+                x1=parseInt(i)+1;
+            }
+        }
+        for(var i in rows){
+            if(x2==rows[i]){
+                x2=parseInt(i)+1;
+                console.log(x2,'yay');
+                break;
+            }
+        }
+        console.log(eval('x'+a))
+        return eval('x'+a);
+    }
+    function move() {
+        
+        var start = document.getElementById('start').value;
+        var end = document.getElementById('end').value;
+        console.log(start,end);
+        if(start ==""){
+            alert("Must enter piece to move");
+            return false;
+        }
+        else if(end ==""){
+            alert("Must enter space you want to move it to");
+            return false;
+        }
+        var x1 =ntoc(document.getElementById('start').value,1);
+        var y1 =ntoc(document.getElementById('start').value,2);
+        var x2 =ntoc(document.getElementById('end').value,1);
+        var y2 =ntoc(document.getElementById('end').value,2);
+        var columns = ['a','b','c','d','e','f','g','h'];
+        console.log(x1, y1, x2, y2);
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
@@ -70,6 +60,7 @@
         xmlhttp.send();
       
     }
+    //calls the populate function which resets the board to the opening position
     function populate(id){
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
@@ -81,111 +72,21 @@
         xmlhttp.send();
     }
 </script>
-<button onclick="move(2,2,1,1);">click</button>
-<button onclick="populate();">Populate</button>
+<h1>Chess</h1>
+<p>The board displayed is the board displayed to every user, to reset it press reset<br>
+To move enter the the chess coords of the piece you want to move(ex: a2) and then the coords of the space you want to move it to<br>
+move verification not yet implemented</p>
+Piece you want moved: <input type="text" id="start"><br>
+Space you want to move it to: <input type="text" id="end"><br>
+<button onclick="move();">Move</button>
+<button onclick="populate();">Reset</button>
 <p id="txtHint"></p>
     <table id="board" class="chess-board">
-            <tbody>
-                <tr>
-                    <th></th>
-                    <th>a</th>
-                    <th>b</th>
-                    <th>c</th>
-                    <th>d</th>
-                    <th>e</th>
-                    <th>f</th>
-                    <th>g</th>
-                    <th>h</th>
-                </tr>
-                <tr>
-                    <th>8</th>
-                    <td class="light" id="a8"><?php echo ${$board[0][0]} ?></td>
-                    <td class="dark" id="b8"><?php echo ${$board[0][1]} ?></td>
-                    <td class="light" id="c8"><?php echo ${$board[0][2]} ?></td>
-                    <td class="dark" id="d8"><?php echo ${$board[0][3]} ?></td>
-                    <td class="light" id="e8"><?php echo ${$board[0][4]} ?></td>
-                    <td class="dark" id="f8"><?php echo ${$board[0][5]} ?></td>
-                    <td class="light" id="g8"><?php echo ${$board[0][6]} ?></td>
-                    <td class="dark" id="h8"><?php echo ${$board[0][7]} ?></td>
-                </tr>
-                <tr>
-                    <th>7</th>
-                    <td class="dark" id="a7"><?php echo ${$board[1][0]} ?></td>
-                    <td class="light" id="a7"><?php echo ${$board[1][1]} ?></td>
-                    <td class="dark" id="a7"><?php echo ${$board[1][2]} ?></td>
-                    <td class="light" id="a7"><?php echo ${$board[1][3]} ?></td>
-                    <td class="dark" id="a7"><?php echo ${$board[1][4]} ?></td>
-                    <td class="light" id="a7"><?php echo${$board[1][5]} ?></td>
-                    <td class="dark" id="a7"><?php echo ${$board[1][6]} ?></td>
-                    <td class="light" id="a7"><?php echo ${$board[1][7]} ?></td>
-                </tr>
-                <tr>
-                    <th>6</th>
-                    <td class="light" id="a6"><?php echo ${$board[2][0]} ?></td>
-                    <td class="dark" id="b6"><?php echo ${$board[2][1]} ?></td>
-                    <td class="light" id="c6"><?php echo ${$board[2][2]} ?></td>
-                    <td class="dark" id="d6"><?php echo ${$board[2][3]} ?></td>
-                    <td class="light" id="e6"><?php echo ${$board[2][4]} ?></td>
-                    <td class="dark" id="f6"><?php echo ${$board[2][5]} ?></td>
-                    <td class="light" id="g6"><?php echo ${$board[2][6]} ?></td>
-                    <td class="dark" id="h6"><?php echo ${$board[2][7]} ?></td>
-                </tr>
-                <tr>
-                    <th>5</th>
-                   <td class="dark" id="a5"><?php echo ${$board[3][0]} ?></td>
-                    <td class="light" id="a5"><?php echo ${$board[3][1]} ?></td>
-                    <td class="dark" id="a5"><?php echo ${$board[3][2]} ?></td>
-                    <td class="light" id="a5"><?php echo ${$board[3][3]} ?></td>
-                    <td class="dark" id="a5"><?php echo ${$board[3][4]} ?></td>
-                    <td class="light" id="a5"><?php echo ${$board[3][5]} ?></td>
-                    <td class="dark" id="a5"><?php echo ${$board[3][6]} ?></td>
-                    <td class="light" id="a5"><?php echo ${$board[3][7]} ?></td>
-                </tr>
-                <tr>
-                    <th>4</th>
-                    <td class="light" id="a4"><?php echo ${$board[4][0]} ?></td>
-                    <td class="dark" id="b4"><?php echo ${$board[4][1]} ?></td>
-                    <td class="light" id="c4"><?php echo ${$board[4][2]} ?></td>
-                    <td class="dark" id="d4"><?php echo ${$board[4][3]} ?></td>
-                    <td class="light" id="e4"><?php echo ${$board[4][4]} ?></td>
-                    <td class="dark" id="f4"><?php echo ${$board[4][5]} ?></td>
-                    <td class="light" id="g4"><?php echo ${$board[4][6]} ?></td>
-                    <td class="dark" id="h4"><?php echo ${$board[4][7]} ?></td>
-                </tr>
-                <tr>
-                    <th>3</th>
-                    <td class="dark" id="a3"><?php echo ${$board[5][0]} ?></td>
-                    <td class="light" id="a3"><?php echo ${$board[5][1]} ?></td>
-                    <td class="dark" id="a3"><?php echo ${$board[5][2]} ?></td>
-                    <td class="light" id="a3"><?php echo ${$board[5][3]} ?></td>
-                    <td class="dark" id="a3"><?php echo ${$board[5][4]} ?></td>
-                    <td class="light" id="a3"><?php echo ${$board[5][5]} ?></td>
-                    <td class="dark" id="a3"><?php echo ${$board[5][6]} ?></td>
-                    <td class="light" id="a3"><?php echo ${$board[5][7]} ?></td>
-                </tr>
-                <tr>
-                    <th>2</th>
-                    <td class="light" id="a2"><?php echo ${$board[6][0]} ?></td>
-                    <td class="dark" id="b2"><?php echo ${$board[6][1]} ?></td>
-                    <td class="light" id="c2"><?php echo ${$board[6][2]} ?></td>
-                    <td class="dark" id="d2"><?php echo ${$board[6][3]} ?></td>
-                    <td class="light" id="e2"><?php echo ${$board[6][4]} ?></td>
-                    <td class="dark" id="f2"><?php echo ${$board[6][5]} ?></td>
-                    <td class="light" id="g2"><?php echo ${$board[6][6]} ?></td>
-                    <td class="dark" id="h2"><?php echo ${$board[6][7]} ?></td>
-                </tr>
-                <tr>
-                    <th>1</th>
-                    <td class="dark" id="a1"><?php echo ${$board[7][0]} ?></td>
-                    <td class="light" id="a1"><?php echo ${$board[7][1]} ?></td>
-                    <td class="dark" id="a1"><?php echo ${$board[7][2]} ?></td>
-                    <td class="light" id="a1"><?php echo ${$board[7][3]} ?></td>
-                    <td class="dark" id="a1"><?php echo ${$board[7][4]} ?></td>
-                    <td class="light" id="a1"><?php echo ${$board[7][5]} ?></td>
-                    <td class="dark" id="a1"><?php echo ${$board[7][6]} ?></td>
-                    <td class="light" id="a1"><?php echo ${$board[7][7]} ?></td>
-                </tr>
-            </tbody>
+            
+            <?php 
+            //gets the board from the data base
+            getBoard() 
+            ?>
         </table>
 </body>
 </html>
