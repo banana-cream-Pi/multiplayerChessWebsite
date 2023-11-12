@@ -10,31 +10,41 @@
         
 ?>
 <script>
-    //function uses ajax magic to call the move function from functions.php which returns the board
+    //ntoc(notation to coord) function returns x or y coordinate depending on whether a = 1 or a = 2. Input chess notation(ex: a2) for note
+    function notation_check(input){
+        
+        let regex = /[a-h][1-8]/;
+        return regex.test(input.toLowerCase());
+}
+    
     function ntoc(note,a){
         var columns = ['a','b','c','d','e','f','g','h'];
         var rows = [8,7,6,5,4,3,2,1];
-        var x1=note[0];
+        var x1=note[0].toLowerCase();
         var x2=note[1];
+        
         for(var i in columns){
             if(x1==columns[i]){
                 x1=parseInt(i)+1;
             }
+            
         }
+        
         for(var i in rows){
             if(x2==rows[i]){
                 x2=parseInt(i)+1;
-                console.log(x2,'yay');
+               
                 break;
             }
         }
-        console.log(eval('x'+a))
+        console.log(eval('x'+a));
         return eval('x'+a);
     }
+    //function uses ajax magic to call the move function from functions.php which returns the board
     function move() {
         
-        var start = document.getElementById('start').value;
-        var end = document.getElementById('end').value;
+        var start = document.getElementById('start').value.toLowerCase();
+        var end = document.getElementById('end').value.toLowerCase();
         console.log(start,end);
         if(start ==""){
             alert("Must enter piece to move");
@@ -43,7 +53,14 @@
         else if(end ==""){
             alert("Must enter space you want to move it to");
             return false;
+        }else if(!notation_check(start)||!notation_check(end)||start.length!=2||end.length!=2){
+            alert("Invalid notation");
+            return false;
+        }else if(start==end){
+            alert("You can't move a piece to a place that it already is");
+            return false;
         }
+        
         var x1 =ntoc(document.getElementById('start').value,1);
         var y1 =ntoc(document.getElementById('start').value,2);
         var x2 =ntoc(document.getElementById('end').value,1);

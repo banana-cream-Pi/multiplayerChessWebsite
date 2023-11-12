@@ -106,8 +106,9 @@ function getBoard(){
     global $knightB;
     global $bishopB;
     global $queenB;
-    global  $kingB;
-
+    global $kingB;
+    global $blank;
+    
     global $servername; global $username; global $password; global $dbname;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
