@@ -11,4 +11,18 @@ font-family: monospace;
             .chess-board .dark { background: #555; }
             .chess-board img{width:30px;}
             
-            
+#log-thing{
+    position: fixed;
+        top:90px;
+    left:400px;
+    width:100px;
+}
+#log{
+    border-style:solid;
+    border-width: thin;
+    padding: 5px;
+    height:120px;
+   
+    overflow-y: scroll;
+    
+}

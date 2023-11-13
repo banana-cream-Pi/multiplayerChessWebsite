@@ -85,9 +85,30 @@ function populate(){
     }
     }
     change(1,9,"white");
+    $myfile = fopen("moveLog.txt", "w") or die("Unable to open file!");
+    
+    $txt = " ";
+    fwrite($myfile, $txt);
+    
+    fclose($myfile);
+}
+function dispLog(){
+    $myfile = fopen("moveLog.txt", "r") or die("Unable to open file!");
+    echo fread($myfile,filesize("moveLog.txt"));
+    fclose($myfile);
+}
+function cton($x,$y){
+    	$columns = ["a", "b", "c", "d", "e", "f", "g", "h"];
+	    $rows = [8, 7, 6, 5, 4, 3, 2, 1];
+        $nx = $columns[$x-1];
+        $ny = $rows[$y-1];
+        $nx .= strval($ny);
+        
+	return $nx;
 }
 //moves a piece from (x1, y1) to (x2, y2)
 function move($x1,$y1,$x2,$y2){
+    
     $piece = pquery($x1,$y1);
     change($x2,$y2,$piece);
     change($x1,$y1,'blank');
@@ -96,6 +117,14 @@ function move($x1,$y1,$x2,$y2){
     }else{
         change(1,9,"white");
     }
+    
+    $myfile = fopen("moveLog.txt", "a") or die("Unable to open file!");
+    
+    $txt = cton($x1,$y1) . " to ".cton($x2, $y2)."<br>\n";
+    fwrite($myfile, $txt);
+    
+    fclose($myfile);
+
 }
 
 //returns the html code for the board using information from the database

@@ -42,6 +42,20 @@ async function turnDisp(){
 	document.getElementById('turn').innerHTML= "Turn: " +color;
 }
 turnDisp();
+async function logDisp(){
+	var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				document.getElementById('log').innerHTML = this.responseText;
+				var scroll=document.getElementById("log");
+				scroll.scrollTop = scroll.scrollHeight;
+				
+			}
+		};
+		xmlhttp.open("GET", "dispLog.php", true);
+		xmlhttp.send();
+}
+logDisp();
 //validates that the move is a valid chess move--may need to optimise
 async function validate(x1, y1, x2, y2) {
     //get piece you're trying to move
@@ -57,7 +71,7 @@ async function validate(x1, y1, x2, y2) {
     //gets colors of respective peices(important for pawn logic)
 	var color = x.slice(-1);
 	if(color!=document.getElementById('color-select').value[0].toUpperCase()){
-		console.log(document.getElementById('color-select').value[0].toUpperCase(),color);
+	
 		invalid("Can only move your own color");
 		return false;
 	}
@@ -157,9 +171,9 @@ async function validate(x1, y1, x2, y2) {
 					return false;
 				}
 			} else {
-				console.log("k..man");
+				
 				if (y2 > y1) {
-					console.log("uno");
+					
 					for (i = y1 + 1; i != y2; i++) {
 						if ((await getPiece(x1, i)) != "blank") {
 							//fix this: this sucks
@@ -168,9 +182,9 @@ async function validate(x1, y1, x2, y2) {
 						}
 					}
 				} else if (y2 < y1) {
-					console.log("dos");
+					
 					for (i = y1 - 1; i != y2; i--) {
-						console.log(i);
+						
 						if ((await getPiece(x1, i)) != "blank") {
 							//fix this: this sucks
 							invalid("A piece is in your path");
@@ -186,7 +200,7 @@ async function validate(x1, y1, x2, y2) {
 	} 
 	//knight logic
 	else if (x == "knight") {
-		console.log("knight");
+		
 		//if valid rook location, else fail
 		if (
 			(y2 == y1 + 2 && x2 == x1 + 1) ||
@@ -286,7 +300,7 @@ async function validate(x1, y1, x2, y2) {
 				} else if (x2 < x1) {
 					for (i = x1 - 1; i != x2; i--) {
 						if ((await getPiece(i, y1)) != "blank") {
-							console.log(await getPiece(y1, i), y1, i);
+						
 							invalid("Piece in your pathR2");
 							return false;
 						}
@@ -382,7 +396,7 @@ function ntoc(note, a) {
 			break;
 		}
 	}
-	console.log(eval("x" + a));
+
 	return eval("x" + a);
 }
 
@@ -390,7 +404,7 @@ function ntoc(note, a) {
 async function move() {
 	var start = document.getElementById("start").value.toLowerCase();
 	var end = document.getElementById("end").value.toLowerCase();
-	console.log(start, end);
+	
 	if (start == "") {
 		alert("Must enter piece to move");
 		return false;
@@ -421,6 +435,7 @@ async function move() {
 			if (this.readyState == 4 && this.status == 200) {
 				document.getElementById("board").innerHTML = this.responseText;
 				turnDisp();//displays who's turn it is
+				logDisp();//updates turn log
 			}
 		};
 		xmlhttp.open(
@@ -440,6 +455,7 @@ function populate(id) {
 		if (this.readyState == 4 && this.status == 200) {
 			document.getElementById("board").innerHTML = this.responseText;
 			turnDisp();
+			logDisp();
 		}
 	};
 	xmlhttp.open("GET", "populate.php", true);
