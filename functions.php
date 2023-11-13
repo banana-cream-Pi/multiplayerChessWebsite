@@ -84,13 +84,18 @@ function populate(){
             change($n+1,$i+1,$nvalue);
     }
     }
+    change(1,9,"white");
 }
 //moves a piece from (x1, y1) to (x2, y2)
 function move($x1,$y1,$x2,$y2){
     $piece = pquery($x1,$y1);
     change($x2,$y2,$piece);
     change($x1,$y1,'blank');
-    
+    if(pquery(1,9)=='white'){
+        change(1,9,"black");
+    }else{
+        change(1,9,"white");
+    }
 }
 
 //returns the html code for the board using information from the database

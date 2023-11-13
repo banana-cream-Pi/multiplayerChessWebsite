@@ -1,4 +1,4 @@
-//gets the current board from the database every 3 seconds and updates the page
+//gets the current board from the database every 5 seconds and updates the page
 setInterval(function(){
         var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function () {
@@ -8,7 +8,7 @@ setInterval(function(){
 	};
 	xmlhttp.open("GET", "getBoard.php", true);
 	xmlhttp.send();
-}, 3000);
+}, 5000);
 //function returns the piece located at x1,y1
 function getPiece(x1, y1) {
 	let p = new Promise((resolve, reject) => {
@@ -36,6 +36,12 @@ function getPiece(x1, y1) {
 function invalid(msg) {
 	alert("Invalid Move: " + msg);
 }
+//displays who's turn it is
+async function turnDisp(){
+	var color = await getPiece(1,9);
+	document.getElementById('turn').innerHTML= "Turn: " +color;
+}
+turnDisp();
 //validates that the move is a valid chess move--may need to optimise
 async function validate(x1, y1, x2, y2) {
     //get piece you're trying to move
@@ -45,10 +51,22 @@ async function validate(x1, y1, x2, y2) {
 		invalid("Can't move empty space");
 		return false;
 	}
+	
 	//get space you're moving the piece to
 	var y = await getPiece(x2, y2);
     //gets colors of respective peices(important for pawn logic)
 	var color = x.slice(-1);
+	if(color!=document.getElementById('color-select').value[0].toUpperCase()){
+		console.log(document.getElementById('color-select').value[0].toUpperCase(),color);
+		invalid("Can only move your own color");
+		return false;
+	}
+	//handles turn
+	var tcolor = await getPiece(1,9);
+	if(color!=tcolor[0].toUpperCase()){
+		invalid("It is "+tcolor+"'s turn");
+		return false;
+	}
 	var ycolor = y.slice(-1);
 	x = x.substr(0, x.length - 1);
 	//fails if you're trying to take one of your own pieces
@@ -199,44 +217,42 @@ async function validate(x1, y1, x2, y2) {
 		//if diagonal move this checks that no pieces are blocking the path
 		else {
 			if (x2 > x1) {
-				for (i = x1 + 1; i != x2; i++) {
-					if (y2 > y1) {
-						for (var j = y1 + 1; j != y2; j++) {
-							if ((await getPiece(j, i)) != "blank") {
-								invalid("Piece in your path");
-								return false;
-							}
+				if(y2>y1){
+					for (var i=x1+1, j=y1+1; i != x2, j!=y2; i++,j++) {
+						if ((await getPiece(i, j)) != "blank") {
+							invalid("A piece is in your path");
+							return false;
 						}
-					} else {
-						for (j = y1 - 1; j != y2; j--) {
-							if ((await getPiece(j, i)) != "blank") {
-								invalid("Piece in your path");
-								return false;
-							}
+					}
+					
+				}else{
+					for (i=x1+1, j=y1-1; i != x2, j!=y2; i++,j--) {
+						 if ((await getPiece(i, j)) != "blank") {
+							invalid("A piece is in your path");
+							return false;
 						}
 					}
 				}
-			} else {
-				for (i = x1 - 1; i != x2; i--) {
-					if (y2 > y1) {
-						for (j = y1 + 1; j != y2; j++) {
-							if ((await getPiece(j, i)) != "blank") {
-								invalid("Piece in your path");
-								return false;
-							}
-						}
-					} else {
-						for (j = y1 - 1; j != y2; j--) {
-							if ((await getPiece(j, i)) != "blank") {
-								invalid("Piece in your path");
-								return false;
-							}
+			}else{
+				if(y2>y1){
+					for (var i=x1-1, j=y1+1; i != x2, j!=y2; i--,j++) {
+						 if ((await getPiece(i, j)) != "blank") {
+							invalid("A piece is in your path");
+							return false;
 						}
 					}
-				}
+					
+				}else{
+					for (i=x1-1, j=y1-1; i != x2, j!=y2; i--,j--) {
+						 if ((await getPiece(i, j)) != "blank") {
+							invalid("A piece is in your path");
+							return false;
+						}
+					}
+				}}
 			}
 		}
-	}
+	
 	//king logic
 	if (x == "king") {
 	    //if distance from starting position > 1 fail
@@ -303,42 +319,39 @@ async function validate(x1, y1, x2, y2) {
 			Math.max(x1, x2) - Math.min(x1, x2)
 		) {
 			if (x2 > x1) {
-				for (i = x1 + 1; i != x2; i++) {
-					if (y2 > y1) {
-						for (j = y1 + 1; j != y2; j++) {
-							if ((await getPiece(j, i)) != "blank") {
-								invalid("Piece in your pathb1");
-								return false;
-							}
+				if(y2>y1){
+					for (var i=x1+1, j=y1+1; i != x2, j!=y2; i++,j++) {
+						if ((await getPiece(i, j)) != "blank") {
+							invalid("A piece is in your path");
+							return false;
 						}
-					} else {
-						for (j = y1 - 1; j != y2; j--) {
-							if ((await getPiece(j, i)) != "blank") {
-								invalid("Piece in your pathb2");
-								return false;
-							}
+					}
+					
+				}else{
+					for (i=x1+1, j=y1-1; i != x2, j!=y2; i++,j--) {
+						 if ((await getPiece(i, j)) != "blank") {
+							invalid("A piece is in your path");
+							return false;
 						}
 					}
 				}
-			} else {
-				for (i = x1 - 1; i != x2; i--) {
-					if (y2 > y1) {
-						for (j = 1 + 1; j != y2; j++) {
-							if ((await getPiece(j, i)) != "blank") {
-								invalid("Piece in your pathb3");
-								return false;
-							}
-						}
-					} else {
-						for (j = y1 - 1; j != y2; j--) {
-							if ((await getPiece(j, i)) != "blank") {
-								invalid("Piece in your pathb4");
-								return false;
-							}
+			}else{
+				if(y2>y1){
+					for (var i=x1-1, j=y1+1; i != x2, j!=y2; i--,j++) {
+						 if ((await getPiece(i, j)) != "blank") {
+							invalid("A piece is in your path");
+							return false;
 						}
 					}
-				}
-			}
+					
+				}else{
+					for (i=x1-1, j=y1-1; i != x2, j!=y2; i--,j--) {
+						 if ((await getPiece(i, j)) != "blank") {
+							invalid("A piece is in your path");
+							return false;
+						}
+					}
+				}}
 		}
 	}
 	return true;
@@ -407,6 +420,7 @@ async function move() {
 		xmlhttp.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				document.getElementById("board").innerHTML = this.responseText;
+				turnDisp();//displays who's turn it is
 			}
 		};
 		xmlhttp.open(
@@ -425,6 +439,7 @@ function populate(id) {
 	xmlhttp.onreadystatechange = function () {
 		if (this.readyState == 4 && this.status == 200) {
 			document.getElementById("board").innerHTML = this.responseText;
+			turnDisp();
 		}
 	};
 	xmlhttp.open("GET", "populate.php", true);

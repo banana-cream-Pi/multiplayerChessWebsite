@@ -5,7 +5,7 @@
     <title>Chess Online</title>
 </head>
 <body>
-    <h1 id="Hello-there"></h1>
+    
     <script src="./move-script.js"></script><!--script file-->
     <p id='test'></p>
     <h1>Chess</h1>
@@ -16,6 +16,12 @@
     Space you want to move it to: <input type="text" id="end"><br><!--place to move to-->
     <button onclick="move();">Move</button>
     <button onclick="populate();">Reset</button>
+    
+    Team: <select name="color-select" id="color-select"> 
+        <option value="white">white</option> 
+        <option value="black">black</option> 
+    </select>
+    <p id="turn"></p>
     <p id="txtHint"></p>
         <table id="board" class="chess-board">
                 
