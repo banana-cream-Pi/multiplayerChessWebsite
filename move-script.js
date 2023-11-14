@@ -93,6 +93,7 @@ async function validate(x1, y1, x2, y2) {
 		
 		if (y1 == y2) {
 			invalid("Cannot move horizontally");
+			return false;
 		}
 		if (color == "W") {//if moving white pawn, must be color specific
 			
